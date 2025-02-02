@@ -33,7 +33,7 @@ class Computer(Base):
     __tablename__ = "computers"
 
     id = Column(Integer, primary_key=True, index=True)
-    ip_address = Column(String, unique=True, index=True)
+    ip_address = Column(String, unique=False, index=True)
     latency = Column(String)
     hostname = Column(String)
     client_id = Column(Integer, ForeignKey("clients.id"))
