@@ -134,6 +134,33 @@ def get_all_clients():
     finally:
         session.close()
 
+@app.get("/clients/{client_name}")
+def get_client(client_name: str):
+    session = SessionLocal()
+    try:
+        # Recherche du client par son nom
+        client = session.query(Client).filter(Client.name == client_name).first()
+        if not client:
+            raise HTTPException(status_code=404, detail="Client not found")
+
+        # Construction de la réponse avec les informations du client et de ses ordinateurs
+        result = {
+            "client": client.name,
+            "computers": [
+                {
+                    "ip_address": computer.ip_address,
+                    "latency": computer.latency,
+                    "hostname": computer.hostname,
+                    "ports": {port.port_number: port.service_name for port in computer.ports},
+                }
+                for computer in client.computers
+            ],
+        }
+        return result
+    finally:
+        session.close()
+
+
 @app.put("/clients/{client_name}")
 def update_client(client_name: str, data: dict):
     session = SessionLocal()
