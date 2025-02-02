@@ -3,9 +3,19 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from typing import List
+from fastapi.middleware.cors import CORSMiddleware
 
 # Création de l'application et configuration de la base de données
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permet toutes les origines (vous pouvez aussi spécifier une origine spécifique)
+    allow_credentials=True,  # Autoriser les informations d'identification
+    allow_methods=["*"],  # Permet toutes les méthodes HTTP (GET, POST, DELETE, etc.)
+    allow_headers=["*"],  # Permet tous les en-têtes
+)
+
 DATABASE_URL = "sqlite:///./data.db"
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
