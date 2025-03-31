@@ -42,16 +42,16 @@ class Client(Base):
     __tablename__ = "clients"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True)
+    name = Column(String(255), unique=True, index=True)
     computers = relationship("Computer", back_populates="client", cascade="all, delete")
 
 class Computer(Base):
     __tablename__ = "computers"
 
     id = Column(Integer, primary_key=True, index=True)
-    ip_address = Column(String, unique=False, index=True)
-    latency = Column(String)
-    hostname = Column(String)
+    ip_address = Column(String(45), unique=False, index=True)  # 45 pour IPv6
+    latency = Column(String(50))
+    hostname = Column(String(255))
     client_id = Column(Integer, ForeignKey("clients.id"))
     client = relationship("Client", back_populates="computers")
     ports = relationship("Port", back_populates="computer", cascade="all, delete")
@@ -60,10 +60,11 @@ class Port(Base):
     __tablename__ = "ports"
 
     id = Column(Integer, primary_key=True, index=True)
-    port_number = Column(String)
-    service_name = Column(String)
+    port_number = Column(String(10))
+    service_name = Column(String(255))
     computer_id = Column(Integer, ForeignKey("computers.id"))
     computer = relationship("Computer", back_populates="ports")
+
 
 # Création des tables
 Base.metadata.create_all(bind=engine)
