@@ -4,6 +4,8 @@ from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import os
 
 # Création de l'application et configuration de la base de données
 app = FastAPI()
@@ -15,11 +17,24 @@ app.add_middleware(
     allow_methods=["*"],  # Permet toutes les méthodes HTTP (GET, POST, DELETE, etc.)
     allow_headers=["*"],  # Permet tous les en-têtes
 )
+### legacy mode
+# DATABASE_URL = "sqlite:///./data.db"
+#engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 
-DATABASE_URL = "sqlite:///./data.db"
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+load_dotenv()  # Charge les variables depuis .env
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_HOST = os.getenv("DB_HOST")
+DB_NAME = os.getenv("DB_NAME")
+
+DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+engine = create_engine(DATABASE_URL)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base: DeclarativeMeta = declarative_base()
+
+
+
 
 # Modèles de base de données
 class Client(Base):
